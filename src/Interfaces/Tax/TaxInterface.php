@@ -2,7 +2,7 @@
 
 namespace App\Interfaces\Tax;
 
-use App\Budget;
+use App\Budgets\Budget;
 
 interface TaxInterface {
     public function calculate(Budget $budget): float;

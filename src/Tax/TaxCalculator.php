@@ -1,10 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Tax;
 
-use App\Budget;
-use App\Enums\TaxType;
-use App\Enums\TaxValue;
+use App\Budgets\Budget;
 use App\Interfaces\Tax\TaxInterface;
 
 class TaxCalculator {

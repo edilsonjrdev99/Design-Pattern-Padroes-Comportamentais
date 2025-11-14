@@ -2,7 +2,7 @@
 
 namespace App\Tax;
 
-use App\Budget;
+use App\Budgets\Budget;
 use App\Enums\TaxValue;
 use App\Interfaces\Tax\TaxInterface;
 
