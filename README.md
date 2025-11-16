@@ -11,6 +11,12 @@ Esse é um projeto que aplica conceitos estudados sobre o Design Pattern - padr�
 | ICMS     | 12%       |
 | ISS      | 6%        |
 
+**Tabela de impostos com 2 possíveis valores**
+| Imposto  | Valor max (%) | Valor min (%) |
+|----------|---------------|---------------|
+| IPV      | 12%           | 20%           |
+| ISS      | 6%            | 8%            |
+
 **Tabela de regras de descontos**
 
 As regras tem prioridades para não ser possível usar descontos progressivos, por exemplo o maior desconto é o de acima de 500, se o orçamento for de um valor que encaixe nessa regra o desconto será de 10%, mesmo se a quantidade for 10, para não ocorrer de aplicar 15% que é a soma dos dois descontos, portante somente uma regra será aplicada e tem prioridade.
@@ -135,4 +141,90 @@ class DiscountCalculator {
         return $discountChain->calculate($budget);
     }
 }
+```
+
+#### Template Method
+
+***O que ele faz?***
+Geralmente ele é usado para padronizar partes do código que geralmente são iguais, ao invés de usarmos ctrl + c e ctrl +v, definimos por exemplo uma classe abstrata que responsabiliza as classes filhas em criar métodos necessários que podem mudar especificamente por classes filhas, e manter a lógica principal na classe abstrata.
+
+Exemplo de código que pode ser substituído pelo template Method
+```php
+// Classe IPV
+class TaxIPV {
+    public function calculate(Budget $budget): float {
+        if ($this->applyMaxTaxRate($budget))
+            return $this->calculateMaxTaxRate($budget);
+
+        return $this->calculateMinTaxRate($budget);
+    }
+
+    protected function calculateMaxTaxRate(Budget $budget): float {
+        return $budget->value * 0.20;
+    }
+
+    protected function calculateMinTaxRate(Budget $budget): float {
+        return $budget->value * 0.01;
+    }
+
+    protected function applyMaxTaxRate(Budget $budget): bool {
+        retrun $budget->value > 600;
+    }
+}
+
+// Classe IPA
+class TaxIPA {
+    public function calculate(Budget $budget): float {
+        if ($this->applyMaxTaxRate($budget))
+            return $this->calculateMaxTaxRate($budget);
+
+        return $this->calculateMinTaxRate($budget);
+    }
+
+    protected function calculateMaxTaxRate(Budget $budget): float {
+        return $budget->value * 0.50;
+    }
+
+    protected function calculateMinTaxRate(Budget $budget): float {
+        return $budget->value * 0.19;
+    }
+
+    protected function applyMaxTaxRate(Budget $budget): bool {
+        retrun $budget->value > 700;
+    }
+}
+```
+
+Perceba que elas são praticamente idênticas, a única coisa que mudou foram as taxas, veja como podemos resolver
+```php
+abstract class TaxWith2Rates {
+    public function calculate(Budget $budget): float {
+        if ($this->applyMaxTaxRate($budget))
+            return $this->calculateMaxTaxRate($budget);
+
+        return $this->calculateMinTaxRate($budget);
+    }
+
+    abstract protected function calculateMaxTaxRate(Budget $budget): float;
+    abstract protected function calculateMinTaxRate(Budget $budget): float;
+    abstract protected function applyMaxTaxRate(Budget $budget): float;
+}
+
+class TaxIPV extends TaxWith2Rates {
+    protected function calculateMaxTaxRate(): float {
+        // lógica para taxa máxima
+    }
+
+    protected function calculateMinTaxRate(): float {
+        // lógica para taxa mínima
+    }
+
+    protected function applyMaxTaxRate(): float {
+        // lógica para regra da taxa que define qual valor será aplicado
+    }
+}
+
+$budget = new Budget(100, 8);
+$taxIPV = new TaxIPV();
+$taxValue = $taxIPV->calculate($budget);
 ```
