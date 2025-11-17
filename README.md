@@ -5,7 +5,6 @@
 Esse é um projeto que aplica conceitos estudados sobre o Design Pattern - padrões comportamentais. O projeto é um exemplo de uma loja que precisa calcular o imposto dos orçamentos, existem dois tipos de impostos, o ICMS com 12% e ISS com 6%
 
 **Tabela de Impostos**
-
 | Imposto | Valor (%) |
 |----------|-----------|
 | ICMS     | 12%       |
@@ -25,6 +24,15 @@ As regras tem prioridades para não ser possível usar descontos progressivos, p
 |-----------------------------|-----------|
 | Valor maior que **500**     | **10%**   |
 | Quantidade maior que **5**  | **5%**    |
+
+**Tabela de status de pedidos**
+| Status     | Próximo status |
+|-----------------------------|
+| Criado     | Pendente       |
+| Pendente   | Pago           |
+| Pago       | Enviado        |
+| Enviado    | Finalizado     |
+| Finalizado | Não possui     |
 
 ### Conceitos
 
@@ -227,4 +235,59 @@ class TaxIPV extends TaxWith2Rates {
 $budget = new Budget(100, 8);
 $taxIPV = new TaxIPV();
 $taxValue = $taxIPV->calculate($budget);
+```
+
+#### State
+
+***Como funciona?***
+É utilizado para substituir vários ifs também ou codigos que validam muita coisa, no state podemos definir os passos próximos e o comportamento específico dele. Isso remove condições gigantes na classe principal e permite adicionar ou alterar estados sem quebrar o código. **Lembrando que dependendo da quantidade e simplicidade dos ifs não compensa usar**
+
+Exemplo de um código que pode ser substituído
+```php
+private function nexState(string $state): string {
+    if ($state == 'created')
+        return 'pending';
+
+    if ($state == 'pending')
+        return 'paid';
+
+    if ($state == 'paid')
+        return 'delivery';
+
+    if ($state == 'delivery')
+        return 'finish';
+
+    if ($state == 'finish')
+        return 'finish';
+}
+
+private function getStatus($state): string {
+    switch($state) {
+        case 'created':
+            return 'Criado';
+        case 'pending':
+            return 'Pendente';
+        // Resto do switch
+        default:
+            return 'Status não encontrado';
+    }
+}
+```
+
+Com o state podemos criar classes específicas para controlar o estado do pedido
+```php
+interface OrderStateInterface {
+    public function nextOrderState(): OrderStateInterface;
+    public function getOrderStatus(): string;
+}
+
+class CreatedOrder implements OrderStateInterface {
+    public function nextOrderState(): OrderStateInterface  {
+        return new PendingOrder();
+    }
+
+    public function getOrderStatus(): string {
+        return OrderStatus::CREATED_STATUS->value;
+    }
+}
 ```
