@@ -232,7 +232,7 @@ class TaxIPV extends TaxWith2Rates {
     }
 }
 
-$budget = new Budget(100, 8);
+$budget = new Budget(100, 8, "Junin");
 $taxIPV = new TaxIPV();
 $taxValue = $taxIPV->calculate($budget);
 ```

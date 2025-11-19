@@ -10,11 +10,13 @@ class Order {
     private OrderStateInterface $state;
     public float $value;
     public int $quantity;
+    public string $name;
 
     public function __construct(Budget $budget) {
-        $this->state = new CreatedOrder();
-        $this->value = $budget->value;
+        $this->state    = new CreatedOrder();
+        $this->value    = $budget->value;
         $this->quantity = $budget->quantity;
+        $this->name     = $budget->name;
     }
 
     /**

@@ -13,7 +13,7 @@ echo 'Calculadora de impostos' . PHP_EOL;
 $taxICMSCalculator = new TaxCalculator();
 $taxICMS = new TaxICMS();
 $taxIPV = new TaxIPV();
-$budget = new Budget(100, 1);
+$budget = new Budget(100, 1, 'Junin');
 $taxValue = $taxICMSCalculator->calculate($budget, $taxICMS);
 $taxWith2RatesValue = $taxICMSCalculator->calculate($budget, $taxIPV);
 

@@ -9,7 +9,7 @@ use App\Orders\Order;
 
 echo 'Lidando com pedido' . PHP_EOL;
 
-$budget        = new Budget(100, 6);
+$budget        = new Budget(100, 6, 'Junin');
 $taxICMS       = new TaxICMS();
 $taxValue      = $taxICMS->calculate($budget); // Valor do imposto de ICMS
 $discount      = new DiscountCalculator();
