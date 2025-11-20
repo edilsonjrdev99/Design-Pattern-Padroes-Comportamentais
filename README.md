@@ -388,3 +388,23 @@ class PaymentSubject implements Subject {
     }
 }
 ```
+
+#### Iterator
+
+***Como funciona?***
+Iterator é utilizado para garantir que um array seja realmente percorrível por um foreach, ele também é utilizado para garantir a tipagem de array que você deseja, usamos a interface de IteratorAggregate porque é mais simples, a interface de Iterator exige criarmos vários métodos, por isso geralmente usamos a IteratorAggregate quando queremos garantir que os objetos de classes sejam percorríveis
+
+Exemplo de Iterator
+```php
+class ClientIterator implements IteratorAggregate {
+    private array $clients = [];
+
+    public function addClient(Client $client) {
+        $this->clients[] = $client;
+    }
+
+    public function getIterator() {
+        return New ArrayIterator($this->clients);
+    }
+}
+```
