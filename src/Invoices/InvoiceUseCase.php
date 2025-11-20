@@ -2,10 +2,10 @@
 
 namespace App\Invoices;
 
-use App\Interfaces\Command\CommandInterface;
+use App\Interfaces\Handler\HandlerInterface;
 use App\Invoices\Invoice;
 
-class InvoiceUseCase implements CommandInterface {
+class InvoiceUseCase implements HandlerInterface {
     public function __construct(private Invoice $invoice) {}
 
     public function execute() {
