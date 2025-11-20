@@ -291,3 +291,100 @@ class CreatedOrder implements OrderStateInterface {
     }
 }
 ```
+
+#### Command
+
+***Como funciona?***
+O Command é uma classe que não possui lógica, ela somente será responsável por transportar os dados necessários tipo TDO, ou resumidamente ter propriedades que serão utilizadas em um handler, geralmente são imutáveis, portanto é uma boa prática usarmos readonly
+
+Exemplo de Command
+```php
+class OrderCommand {
+    public function __construct(
+        public readonly $name,
+        public readonly $value,
+        // Propriedades
+    ) {}
+}
+```
+
+#### Handler
+
+***Como funciona?***
+Handler são classes que terão a responsabilidade de executar uma ação, talvez uma validação e uma ação, mas nunca várias ações, ela vai receber valores de um Command geralmente e executar a ação necessária com eles
+
+Exemplo de Handler
+```php
+interface Handler {
+    public function handle(object $command): void;
+}
+
+class GeneratePaymentHandler implements Handler {
+    public function __construct(
+        private PaymentRepository $payments,
+        private EmailObserver $emailObserver,
+    ) {}
+
+    public function handle(object $command): void {
+        if (!$command instanceof OrderCommand) {
+            throw new InvalidArgumentException("Command inválido");
+        }
+
+        // Lógica para criar o pagamento
+        $payment = $this->payments->create([
+            'name'  => $command->name,
+            'value' => $command->value
+        ]);
+
+        // Notificar observadores (opcional)
+        $this->emailObserver->update($payment);
+    }
+}
+```
+
+#### Observer
+
+***Como funciona?***
+Observers são responsáveis por executar uma ação quando são notificados, geralmente são notificados por um Subject, são usados quando acontece alguma ação no projeto e precisam reagir a isso, como por exemplo quando for criado um pagamento enviar um email e criar o pedido
+
+Exemplo de Observer
+```php
+interface Observer {
+    public function update($data);
+}
+
+class EmailObserver implements Observer {
+    public function update($data) {
+        // Lógica para enviar e-mail aqui
+    }
+}
+```
+
+#### Subject
+
+***Como funciona?***
+Subjetc é responsável por receber os Observers e executar suas ações, ou seja, é quem é responsável por recebe a lista de observers e notifica eles disparando suas ações
+
+Exemplo de Subject
+```php
+interface Subject {
+    public function attach($data);
+    public function notify($data): void;
+}
+
+class PaymentSubject implements Subject {
+    private array $observers = [];
+
+    public function attach($data) {
+        $this->observers[] = $data;
+    }
+
+    public function notify($data) {
+        if (count($this->observers) == 0) return;
+
+        foreach($observers as $observer) {
+            $observer->update($data);
+        }
+    }
+}
+```
